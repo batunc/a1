@@ -1,30 +1,147 @@
 ---
-title: "sdm"
-author: "bt11"
-date: "2024-02-15"
-output: html_document
+editor_options:
+  markdown:
+    wrap: 72
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+![Spatial
+corr.](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\spatialthinning-autocorrelation.png)
+
+GBIF Strix aluco presence only verisi sampling bias ve
+
+spatial auto-correlation düzeltmesi için *inceltildi*.
+
+Input Records: 1473
+
+Final Records: 271
+
+![Correlation
+Matrix](C:/Users/Batuhan/Desktop/Niche%20Modelling/Strix%20aluco/s-aluco-corrplot.png)
+
+**Akaike information criterion** göre değişken önemleri (WorldClim2.1
+Bioclimatic variables)
+
+variable AIC
+
+1 bio7 1569.065
+
+2 bio4 1569.907
+
+3 bio6 1660.357
+
+4 bio2 1685.776
+
+5 bio19 1693.831
+
+6 bio13 1694.068
+
+7 bio16 1697.914
+
+8 bio12 1698.536
+
+9 bio11 1701.122
+
+10 bio1 1787.342
+
+11 bio10 1795.081
+
+12 bio15 1819.637
+
+13 bio5 1821.390
+
+14 bio17 1824.509
+
+15 bio14 1827.964
+
+16 bio9 1833.760
+
+17 bio3 1841.781
+
+18 bio18 1844.596
+
+19 bio8 1851.372
+
+**\|r\|\<0.7** ve **AIC** ye göre seçilen az "correlated" değişkenler:
+**"bio7" "bio6" "bio19" "bio15" "bio3" "bio8"**
+
+Veri %80 training, %20 test şeklinde ayrılarak 5 model fitlendi:
+**generalized linear model, generalized additive model, random forest,
+boosted regression trees ve maxent**.
+
+```{r}
+library(knitr)
+comp_perf <- readRDS(file = "comp_perf.rds")
+kable(x = comp_perf)
 ```
 
-## R Markdown
+Ensemble ortalamaları: (ağırlıklı ortalama true skill statistic'e
+göre)(committee_av: olasılık tahminlerinin **maxSens+Spec threshold**'a
+göre var/yok tahminlerine dönüştürülüp tekrar ortalamanın alınması)
 
-aaaaThis is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r}
+library(knitr)
+ens_perf <- readRDS(file = "ens_perf.rds")
+kable(x = ens_perf)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
+Modellerin 5-fold cross validation sonuçları. **Random Forest???**
 
-You can also embed plots, for example:
+```{r}
+library(knitr)
+cv_perf <- readRDS(file = "cv_perf.rds")
+kable(x = cv_perf)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Güncel 5 model ensemble dağılım tahmini. üstteki olasılık tahmini,
+alttaki thresholda göre var/yok.
+
+![wc2.1 bioc
+sdm](C:/Users/Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\s-aluco-ensemble-current-weightedmean-comm.png)
+
+ssp370 e göre 2081-2100 arası dağılım. miroc6 modelden.
+
+![sdm
+gelecek](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\s-aluco-ensemble-future-weightedmean-comm.png)
+
+Ensemble mean, median ve ağırlıklı mean tahminlerinin
+
+maxSens+Spec threshold'a göre var/yok tahminlerine çevrilmesi.
+
+Günümüz ve gelecek
+
+![current-pres-abs](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\s-aluco-binarisation-of-ensemble-averages-current.png)
+![future-pres-abs](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\s-aluco-binarisation-of-ensemble-averages-future.png)
+
+**Quantification of uncertainty**
+
+Ensemble tahminlerinin standard sapmalarının dağılımları: günümüz ve
+gelecek
+
+![current-sd](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\s-aluco-sdev-of%20ens%20prediction-current.png)
+
+![gelecek-sd](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\s-aluco-sdev-of%20ens%20prediction-future.png)
+
+Novel environments 2081-2100. Training verisinde karşılaşılmayan
+durumlar. Uncertainty düşürmek için bu alanlar çıkarılıp tahmin
+yapılabilir. Küçük alan ve güney alt sınır olduğu için gerek görülmedi.
+
+![novel-env](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\S-aluco%20Novel%20Environments.png)
+
+**truly independent test data**
+
+Modelin İspanya ve çevre bölgesine tahminleri: önce ağırlıklı mean
+olasılık tahminleri sonra ensemble committee var/yok tahminleri.
+
+![spain-ens-wmean](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\spain\wmean-ensemble.png)
+
+![spain-ens-pres-abs](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\spain\committee-pres-abs.png)
+
+İspanya'da Strix aluco'nun **gözlemlenmediği** noktalar
+
+![spain-absences](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\spain\spain-absences.png)
+
+ispanya eBird Strix aluco gözlemlenen noktalar
+
+![spain-presences](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\spain\eBird%20Observation%20Dataset.png)
