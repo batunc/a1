@@ -6,7 +6,8 @@ editor_options:
 
 # **Strix aluco**
 
-GBIF presence verisi 1473 gözlem (çoğunlukla eBird gözlemleri)
+GBIF presence verisi 1473 gözlem (eBird:1395, iNaturalist:24,
+Naturgucker:13..etc)
 
 ![pres-data](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\s-aluco-presence%20observation-1473.png)
 
@@ -166,3 +167,59 @@ olasılık tahminleri sonra ensemble committee var/yok tahminleri.
 ispanya eBird Strix aluco gözlemlenen noktalar
 
 ![spain-presences](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\spain\eBird%20Observation%20Dataset.png)
+
+## Yöntemler
+
+**Veri hazırlığı**
+
+Sampling bias ve spatial autocorrelation düzeltmeleri için Jorge
+Assis’in algoritmasını kullandım.
+
+Assis, J. (2020) R Pipelines to reduce the spatial autocorrelation in
+Species Distribution Models.
+
+Önce her değişken için correlogram oluşturuluyor. Bu correlogramlar
+farklı mesafelerde değerlerin korelasyonlarını gösteriyor. Sonra
+korelasyonun “non-significant” olduğu en kısa mesafeyi bulmak için
+çeşitli lineer modeller kuruluyor. Ardından en kısa mesafelerin
+ortalamasına göre species presence verisi inceltiliyor. Mesela 20km
+çıktı, 20km içinde tek gözlem olacak şekilde veri törpüleniyor. R
+Paketleri: raster, ecodist, sp, spThin, sdmpredictors
+
+Alternatif olarak Damaris Zurell, verinin 30km içinde bir gözlem olacak
+şekilde direk inceltilebileceğini söylüyor. Ama ilk yöntem daha iyi
+sonuç veriyor.
+
+Pseudo absence veri yaratımı için “terra” R paketini kullandım. Yine
+Damaris Zurell’in önerisiyle presence veri sayısının 10 katı sayıda
+random absence verisi yarattım.
+
+Multi-collinearity problemi için Dormann et al. (2013)’ün “select07”
+metodunu, “mecofun” paketi aracılığıyla uyguladım. Burda her değişken
+bir generalised linear model kuruluyor. Korelasyonu \|r\|\<0.7 olan
+değişkenlerden Akaike information criteriona göre en önemliler
+seçiliyor.
+
+Coğrafi veri düzenlemeleri için ise geodata, raster, sp, terra
+paketlerini kullanıldım.
+
+**Modeller**
+
+Random forest modeli (ntree=4000, mtry=1) için “randomForest” paketi,
+
+Maxent modeli(classes = “default”) için “maxnet” paketi,
+
+GAM(family = “binomial”) için “mgcv” paketi,
+
+BRTs(learning.rate = 0.001, tree complexity = 2) için “dismo” ve “gbm”
+paketleri,
+
+GLM için ise R’ın kendi fonksiyonlarını kullandım. Predictor
+değişkenleri, kendileri ve kareleri olarak modele koydum sonra stepwise
+ile modeli basitleştirdim.
+
+Modellerin cross validation’ı ve değerlendirilmesi için “mecofun”
+paketini kullandım.
+
+Environmental novelty hesaplamaları için ise “predicts” paketini
+kullandım.
