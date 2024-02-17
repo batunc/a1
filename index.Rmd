@@ -4,8 +4,21 @@ editor_options:
     wrap: 72
 ---
 
-![Spatial
-corr.](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\spatialthinning-autocorrelation.png)
+# **Strix aluco**
+
+GBIF presence verisi 1473 gözlem (çoğunlukla eBird gözlemleri)
+
+![pres-data](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\s-aluco-presence%20observation-1473.png)
+
+İnceltilmiş veri seti, 271 gözlem
+
+![thinned-data](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\s-aluco-presence%20observation-thinned.png)
+
+İnceltilmiş veri setine "pseudo-absences" verisi eklendikten sonra.
+Damaris Zurell'in "rule of thumb" önerisiyle presence sayısının 10 katı
+random absence verisi üretildi. Bu grafikte kırmızılar var, siyahlar
+yok.
+![data-pres-abs](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\s-aluco-presence%20observation-thinned-wpseudo-absences.png)
 
 GBIF Strix aluco presence only verisi sampling bias ve
 
@@ -15,7 +28,10 @@ Input Records: 1473
 
 Final Records: 271
 
-![Correlation
+![Spatial
+corr.](C:/Users\Batuhan\Desktop\Niche%20Modelling\Strix%20aluco\spatialthinning-autocorrelation.png)
+
+Değişken korelasyon matrisi. ![Correlation
 Matrix](C:/Users/Batuhan/Desktop/Niche%20Modelling/Strix%20aluco/s-aluco-corrplot.png)
 
 **Akaike information criterion** göre değişken önemleri (WorldClim2.1
@@ -23,43 +39,43 @@ Bioclimatic variables)
 
 variable AIC
 
-1 bio7 1569.065
+1- bio7 1569.065
 
-2 bio4 1569.907
+2- bio4 1569.907
 
-3 bio6 1660.357
+3- bio6 1660.357
 
-4 bio2 1685.776
+4- bio2 1685.776
 
-5 bio19 1693.831
+5- bio19 1693.831
 
-6 bio13 1694.068
+6- bio13 1694.068
 
-7 bio16 1697.914
+7- bio16 1697.914
 
-8 bio12 1698.536
+8- bio12 1698.536
 
-9 bio11 1701.122
+9- bio11 1701.122
 
-10 bio1 1787.342
+10- bio1 1787.342
 
-11 bio10 1795.081
+11- bio10 1795.081
 
-12 bio15 1819.637
+12- bio15 1819.637
 
-13 bio5 1821.390
+13- bio5 1821.390
 
-14 bio17 1824.509
+14- bio17 1824.509
 
-15 bio14 1827.964
+15- bio14 1827.964
 
-16 bio9 1833.760
+16- bio9 1833.760
 
-17 bio3 1841.781
+17- bio3 1841.781
 
-18 bio18 1844.596
+18- bio18 1844.596
 
-19 bio8 1851.372
+19- bio8 1851.372
 
 **\|r\|\<0.7** ve **AIC** ye göre seçilen az "correlated" değişkenler:
 **"bio7" "bio6" "bio19" "bio15" "bio3" "bio8"**
@@ -68,15 +84,20 @@ Veri %80 training, %20 test şeklinde ayrılarak 5 model fitlendi:
 **generalized linear model, generalized additive model, random forest,
 boosted regression trees ve maxent**.
 
+Performans rakamları
+
 ```{r}
 library(knitr)
 comp_perf <- readRDS(file = "comp_perf.rds")
 kable(x = comp_perf)
 ```
 
-Ensemble ortalamaları: (ağırlıklı ortalama true skill statistic'e
-göre)(committee_av: olasılık tahminlerinin **maxSens+Spec threshold**'a
-göre var/yok tahminlerine dönüştürülüp tekrar ortalamanın alınması)
+Ensemble ortalamaları: Ağırlıklı ortalama true skill statistic'e göre
+yapıldı. Komite ortalaması(committee_av) olasılık tahminlerinin
+**maxSens+Spec threshold**'a göre var/yok (1 ya da 0) tahminlerine
+dönüştürülmesi şekliyle yapıldı.
+
+Ensemble Performans Rakamları
 
 ```{r}
 library(knitr)
